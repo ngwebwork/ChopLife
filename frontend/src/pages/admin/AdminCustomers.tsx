@@ -5,6 +5,7 @@ import { formatNaira } from "@/utils/currency";
 import { formatDate } from "@/utils/date";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 interface CustomerSummary {
   name: string;
@@ -16,6 +17,7 @@ interface CustomerSummary {
 }
 
 export function AdminCustomers() {
+  useDocumentTitle("Customers");
   const [customers, setCustomers] = useState<CustomerSummary[] | null>(null);
 
   useEffect(() => {

@@ -9,10 +9,12 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
 import { useSettingsStore } from "@/store/settingsStore";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type SettingsFormValues = Omit<Settings, "id" | "updatedAt">;
 
 export function AdminSettings() {
+  useDocumentTitle("Restaurant Settings");
   const [settings, setSettings] = useState<Settings | null>(null);
   const [saving, setSaving] = useState(false);
 
