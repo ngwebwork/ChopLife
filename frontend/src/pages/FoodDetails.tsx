@@ -13,6 +13,7 @@ import { useCartStore } from "@/store/cartStore";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { handleImageError } from "@/utils/image";
 
 export function FoodDetails() {
   const { id } = useParams<{ id: string }>();
@@ -88,7 +89,12 @@ export function FoodDetails() {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <div className="aspect-square w-full overflow-hidden rounded-2xl bg-ink-100">
-          <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+          <img
+            src={item.image}
+            alt={item.name}
+            onError={handleImageError}
+            className="h-full w-full object-cover"
+          />
         </div>
 
         <div>

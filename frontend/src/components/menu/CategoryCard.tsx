@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Category } from "@/types";
+import { handleImageError } from "@/utils/image";
 
 export function CategoryCard({ category }: { category: Category }) {
   return (
@@ -11,6 +12,7 @@ export function CategoryCard({ category }: { category: Category }) {
         src={category.image}
         alt={category.name}
         loading="lazy"
+        onError={handleImageError}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-ink-900/10 to-transparent" />

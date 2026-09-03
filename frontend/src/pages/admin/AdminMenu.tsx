@@ -12,6 +12,7 @@ import { MenuItemFormModal } from "@/components/admin/MenuItemFormModal";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { handleImageError } from "@/utils/image";
 
 export function AdminMenu() {
   useDocumentTitle("Manage Menu");
@@ -103,7 +104,12 @@ export function AdminMenu() {
           {items.map((item) => (
             <div key={item.id} className="overflow-hidden rounded-2xl border border-ink-100 bg-white">
               <div className="relative aspect-[16/10] w-full bg-ink-100">
-                <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  onError={handleImageError}
+                  className="h-full w-full object-cover"
+                />
                 {item.popular && (
                   <span className="absolute left-3 top-3 rounded-full bg-brand-600 px-2.5 py-1 text-[11px] font-bold text-white">
                     Popular

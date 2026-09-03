@@ -5,6 +5,7 @@ import { formatNaira } from "@/utils/currency";
 import { RatingStars } from "@/components/common/RatingStars";
 import { useCartStore } from "@/store/cartStore";
 import { toast } from "@/store/toastStore";
+import { handleImageError } from "@/utils/image";
 
 export function FoodCard({ item }: { item: MenuItem }) {
   const addItem = useCartStore((s) => s.addItem);
@@ -26,6 +27,7 @@ export function FoodCard({ item }: { item: MenuItem }) {
           src={item.image}
           alt={item.name}
           loading="lazy"
+          onError={handleImageError}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {item.popular && (

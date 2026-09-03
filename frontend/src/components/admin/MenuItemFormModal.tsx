@@ -4,6 +4,7 @@ import { Modal } from "@/components/common/Modal";
 import { Input, Textarea } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import type { Category, Extra, MenuItem } from "@/types";
+import { FALLBACK_IMAGE } from "@/utils/image";
 
 interface MenuItemFormModalProps {
   isOpen: boolean;
@@ -82,7 +83,7 @@ export function MenuItemFormModal({ isOpen, onClose, onSave, categories, initial
         description,
         price: Number(price) || 0,
         categoryId,
-        image: image || "https://placehold.co/600x450/EA580C/ffffff?text=" + encodeURIComponent(name || "Food"),
+        image: image || FALLBACK_IMAGE,
         ingredients: ingredientsText.split(",").map((s) => s.trim()).filter(Boolean),
         extras: extras.filter((e) => e.name.trim() !== ""),
         available,

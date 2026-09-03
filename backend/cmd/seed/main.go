@@ -18,8 +18,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func placeholderImage(label, bg string) string {
-	return "https://placehold.co/600x450/" + bg + "/ffffff?text=" + label
+// wikimediaImage builds a stable, hotlink-safe URL to a real photo hosted on
+// Wikimedia Commons via its Special:FilePath redirect. Using real Commons
+// file names (verified against their actual content) instead of generated
+// placeholder graphics means every menu card shows an authentic food photo.
+func wikimediaImage(fileName string) string {
+	return "https://commons.wikimedia.org/wiki/Special:FilePath/" + fileName + "?width=800"
 }
 
 func main() {
@@ -44,15 +48,15 @@ func seedCategories(ctx context.Context) map[string]primitive.ObjectID {
 	names := []struct {
 		Name  string
 		Desc  string
-		Color string
+		Image string
 	}{
-		{"Rice", "Perfectly seasoned rice dishes", "D97706"},
-		{"Swallow", "Traditional Nigerian swallows and soups", "92400E"},
-		{"Soups", "Rich, hearty Nigerian soups", "B45309"},
-		{"Grills", "Smoky grilled meats and suya", "7C2D12"},
-		{"Fast Food", "Quick bites and continental favorites", "DC2626"},
-		{"Drinks", "Chilled and refreshing beverages", "0891B2"},
-		{"Desserts", "Sweet treats to finish your meal", "BE185D"},
+		{"Rice", "Perfectly seasoned rice dishes", wikimediaImage("A_tray_of_jollof_rice,_chicken_with_soft_drink.jpg")},
+		{"Swallow", "Traditional Nigerian swallows and soups", wikimediaImage("Pounded_Yam_and_Egusi_Soup.jpg")},
+		{"Soups", "Rich, hearty Nigerian soups", wikimediaImage("Ogbono_Soup_served_with_eba.jpg")},
+		{"Grills", "Smoky grilled meats and suya", wikimediaImage("Grilled_Chicken_Breasts_(28905381261).jpg")},
+		{"Fast Food", "Quick bites and continental favorites", wikimediaImage("In-N-Out_Burger_cheeseburger_and_fries.jpg")},
+		{"Drinks", "Chilled and refreshing beverages", wikimediaImage("Chapman_in_a_punch_bowl.jpg")},
+		{"Desserts", "Sweet treats to finish your meal", wikimediaImage("Meat_pie.jpg")},
 	}
 
 	ids := make(map[string]primitive.ObjectID)
@@ -61,10 +65,12 @@ func seedCategories(ctx context.Context) map[string]primitive.ObjectID {
 	for _, n := range names {
 		filter := bson.M{"name": n.Name}
 		update := bson.M{
+			"$set": bson.M{
+				"image": n.Image,
+			},
 			"$setOnInsert": bson.M{
 				"name":        n.Name,
 				"description": n.Desc,
-				"image":       placeholderImage(n.Name, n.Color),
 				"active":      true,
 				"createdAt":   now,
 				"updatedAt":   now,
@@ -96,7 +102,7 @@ type menuSeed struct {
 	Description string
 	Price       float64
 	Category    string
-	Color       string
+	Image       string
 	Ingredients []string
 	Extras      []models.Extra
 	Popular     bool
@@ -108,7 +114,8 @@ func seedMenuItems(ctx context.Context, categoryIDs map[string]primitive.ObjectI
 
 	items := []menuSeed{
 		{
-			Name: "Jollof Rice & Chicken", Category: "Rice", Price: 5500, Color: "D97706",
+			Name: "Jollof Rice & Chicken", Category: "Rice", Price: 5500,
+			Image:       wikimediaImage("A_tray_of_jollof_rice,_chicken_with_soft_drink.jpg"),
 			Description: "Smoky party-style jollof rice served with grilled chicken.",
 			Ingredients: []string{"Rice", "Tomato Stew", "Chicken", "Spices"},
 			Extras: []models.Extra{
@@ -119,7 +126,8 @@ func seedMenuItems(ctx context.Context, categoryIDs map[string]primitive.ObjectI
 			Popular: true, Rating: 4.8,
 		},
 		{
-			Name: "Fried Rice & Chicken", Category: "Rice", Price: 5500, Color: "D97706",
+			Name: "Fried Rice & Chicken", Category: "Rice", Price: 5500,
+			Image:       wikimediaImage("Ghanaian_Fried_Rice_%26_Chicken.jpg"),
 			Description: "Colorful fried rice loaded with vegetables and served with chicken.",
 			Ingredients: []string{"Rice", "Mixed Vegetables", "Liver", "Chicken"},
 			Extras: []models.Extra{
@@ -129,7 +137,8 @@ func seedMenuItems(ctx context.Context, categoryIDs map[string]primitive.ObjectI
 			Popular: true, Rating: 4.6,
 		},
 		{
-			Name: "Pounded Yam & Egusi", Category: "Swallow", Price: 4500, Color: "92400E",
+			Name: "Pounded Yam & Egusi", Category: "Swallow", Price: 4500,
+			Image:       wikimediaImage("Pounded_Yam_and_Egusi_Soup.jpg"),
 			Description: "Smooth pounded yam served with rich egusi soup and assorted meat.",
 			Ingredients: []string{"Yam", "Egusi", "Assorted Meat", "Spinach"},
 			Extras: []models.Extra{
@@ -139,7 +148,8 @@ func seedMenuItems(ctx context.Context, categoryIDs map[string]primitive.ObjectI
 			Popular: true, Rating: 4.7,
 		},
 		{
-			Name: "Eba & Okro Soup", Category: "Swallow", Price: 4000, Color: "92400E",
+			Name: "Eba & Okro Soup", Category: "Swallow", Price: 4000,
+			Image:       wikimediaImage("Ogbono_Soup_served_with_eba.jpg"),
 			Description: "Classic eba paired with draw-worthy okro soup and fish.",
 			Ingredients: []string{"Garri", "Okro", "Fish", "Palm Oil"},
 			Extras: []models.Extra{
@@ -148,14 +158,16 @@ func seedMenuItems(ctx context.Context, categoryIDs map[string]primitive.ObjectI
 			Rating: 4.4,
 		},
 		{
-			Name: "Ofada Rice & Ayamase Sauce", Category: "Soups", Price: 5000, Color: "B45309",
+			Name: "Ofada Rice & Ayamase Sauce", Category: "Soups", Price: 5000,
+			Image:       wikimediaImage("Rice_and_Ayamase_sauce.jpg"),
 			Description: "Local ofada rice with spicy ayamase (designer) stew and assorted meat.",
 			Ingredients: []string{"Ofada Rice", "Green Pepper", "Assorted Meat"},
 			Extras:      []models.Extra{{Name: "Extra Meat", Price: 1500}},
 			Rating:      4.5,
 		},
 		{
-			Name: "Grilled Chicken", Category: "Grills", Price: 4800, Color: "7C2D12",
+			Name: "Grilled Chicken", Category: "Grills", Price: 4800,
+			Image:       wikimediaImage("Grilled_Chicken_Breasts_(28905381261).jpg"),
 			Description: "Char-grilled chicken marinated in Nigerian spices, served with sides.",
 			Ingredients: []string{"Chicken", "Pepper Sauce", "Herbs"},
 			Extras: []models.Extra{
@@ -165,46 +177,53 @@ func seedMenuItems(ctx context.Context, categoryIDs map[string]primitive.ObjectI
 			Popular: true, Rating: 4.9,
 		},
 		{
-			Name: "Beef Suya", Category: "Grills", Price: 3500, Color: "7C2D12",
+			Name: "Beef Suya", Category: "Grills", Price: 3500,
+			Image:       wikimediaImage("Suya_seller_in_Nigeria.jpg"),
 			Description: "Skewered beef suya coated in spicy yaji pepper mix.",
 			Ingredients: []string{"Beef", "Suya Spice", "Onions"},
 			Extras:      []models.Extra{{Name: "Extra Spice", Price: 300}},
 			Popular:     true, Rating: 4.7,
 		},
 		{
-			Name: "Shawarma", Category: "Fast Food", Price: 3000, Color: "DC2626",
+			Name: "Shawarma", Category: "Fast Food", Price: 3000,
+			Image:       wikimediaImage("Shawarma_2.jpg"),
 			Description: "Loaded chicken shawarma wrap with sauces and fresh vegetables.",
 			Ingredients: []string{"Chicken", "Tortilla Wrap", "Sauces", "Vegetables"},
 			Extras:      []models.Extra{{Name: "Extra Chicken", Price: 1000}},
 			Popular:     true, Rating: 4.6,
 		},
 		{
-			Name: "Burger", Category: "Fast Food", Price: 3500, Color: "DC2626",
+			Name: "Burger", Category: "Fast Food", Price: 3500,
+			Image:       wikimediaImage("In-N-Out_Burger_cheeseburger_and_fries.jpg"),
 			Description: "Juicy beef burger with cheese, lettuce and our special sauce.",
 			Ingredients: []string{"Beef Patty", "Cheese", "Lettuce", "Bun"},
 			Extras:      []models.Extra{{Name: "Extra Cheese", Price: 500}},
 			Rating:      4.3,
 		},
 		{
-			Name: "Fried Plantain (Dodo)", Category: "Fast Food", Price: 1500, Color: "DC2626",
+			Name: "Fried Plantain (Dodo)", Category: "Fast Food", Price: 1500,
+			Image:       wikimediaImage("Un_plat_d%27alloco_Fried_Plantains.JPG"),
 			Description: "Sweet, golden fried plantain slices.",
 			Ingredients: []string{"Plantain", "Vegetable Oil"},
 			Rating:      4.5,
 		},
 		{
-			Name: "Chapman", Category: "Drinks", Price: 2000, Color: "0891B2",
+			Name: "Chapman", Category: "Drinks", Price: 2000,
+			Image:       wikimediaImage("Chapman_in_a_punch_bowl.jpg"),
 			Description: "Nigeria's favorite fruity mocktail, chilled and refreshing.",
 			Ingredients: []string{"Grenadine", "Fruit Juice", "Soda", "Cucumber"},
 			Rating:      4.6,
 		},
 		{
-			Name: "Zobo", Category: "Drinks", Price: 1200, Color: "0891B2",
+			Name: "Zobo", Category: "Drinks", Price: 1200,
+			Image:       wikimediaImage("Zobo_drink_(hibiscus_juice)_01.png"),
 			Description: "Hibiscus flower drink infused with ginger, pineapple and spices.",
 			Ingredients: []string{"Hibiscus Leaves", "Ginger", "Pineapple"},
 			Rating:      4.4,
 		},
 		{
-			Name: "Meat Pie", Category: "Desserts", Price: 1000, Color: "BE185D",
+			Name: "Meat Pie", Category: "Desserts", Price: 1000,
+			Image:       wikimediaImage("Meat_pie.jpg"),
 			Description: "Flaky pastry filled with seasoned minced meat and vegetables.",
 			Ingredients: []string{"Pastry", "Minced Meat", "Carrots", "Potatoes"},
 			Rating:      4.5,
@@ -223,12 +242,14 @@ func seedMenuItems(ctx context.Context, categoryIDs map[string]primitive.ObjectI
 
 		filter := bson.M{"name": item.Name}
 		update := bson.M{
+			"$set": bson.M{
+				"image": item.Image,
+			},
 			"$setOnInsert": bson.M{
 				"name":        item.Name,
 				"description": item.Description,
 				"price":       item.Price,
 				"categoryId":  categoryID,
-				"image":       placeholderImage(item.Name, item.Color),
 				"ingredients": item.Ingredients,
 				"extras":      nonNilExtras(item.Extras),
 				"available":   true,

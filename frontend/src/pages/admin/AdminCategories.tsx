@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/common/Skeleton";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { FALLBACK_IMAGE, handleImageError } from "@/utils/image";
 
 export function AdminCategories() {
   useDocumentTitle("Manage Categories");
@@ -80,7 +81,12 @@ export function AdminCategories() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((cat) => (
             <div key={cat.id} className="flex items-center gap-4 rounded-2xl border border-ink-100 bg-white p-4">
-              <img src={cat.image} alt={cat.name} className="h-16 w-16 shrink-0 rounded-xl object-cover" />
+              <img
+                src={cat.image}
+                alt={cat.name}
+                onError={handleImageError}
+                className="h-16 w-16 shrink-0 rounded-xl object-cover"
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="truncate text-sm font-bold text-ink-900">{cat.name}</h3>
@@ -174,7 +180,7 @@ function CategoryFormModal({
       const payload = {
         name,
         description,
-        image: image || `https://placehold.co/600x450/EA580C/ffffff?text=${encodeURIComponent(name || "Category")}`,
+        image: image || FALLBACK_IMAGE,
         active: initial?.active ?? true,
       };
       if (initial) {

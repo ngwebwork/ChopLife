@@ -3,6 +3,7 @@ import type { CartItem } from "@/types";
 import { formatNaira } from "@/utils/currency";
 import { QuantitySelector } from "@/components/common/QuantitySelector";
 import { useCartStore } from "@/store/cartStore";
+import { handleImageError } from "@/utils/image";
 
 export function CartItemRow({ item }: { item: CartItem }) {
   const { increment, decrement, removeItem } = useCartStore();
@@ -14,6 +15,7 @@ export function CartItemRow({ item }: { item: CartItem }) {
       <img
         src={item.image}
         alt={item.name}
+        onError={handleImageError}
         className="h-20 w-20 shrink-0 rounded-xl object-cover"
       />
       <div className="flex flex-1 flex-col justify-between">
