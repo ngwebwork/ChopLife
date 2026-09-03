@@ -1,6 +1,7 @@
 import { Leaf, Truck, Heart, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/common/Button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const values = [
   { icon: Leaf, title: "Fresh, Always", desc: "We prepare every dish fresh, using quality local ingredients sourced daily." },
@@ -10,6 +11,7 @@ const values = [
 ];
 
 export function About() {
+  useDocumentTitle("About Us");
   return (
     <div>
       <section className="bg-gradient-to-b from-brand-50 to-cream px-4 py-16 text-center sm:px-6">

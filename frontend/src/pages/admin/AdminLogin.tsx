@@ -8,6 +8,7 @@ import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { getErrorMessage } from "@/services/api";
 import { toast } from "@/store/toastStore";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 interface LoginForm {
   email: string;
@@ -15,6 +16,7 @@ interface LoginForm {
 }
 
 export function AdminLogin() {
+  useDocumentTitle("Admin Login");
   const { isAuthenticated, login } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();

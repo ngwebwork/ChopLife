@@ -12,6 +12,7 @@ import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/common/Button";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const STATUS_FILTERS: (OrderStatus | "All")[] = ["All", ...ORDER_STATUS_FLOW, "Cancelled"];
 
@@ -24,6 +25,7 @@ const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
 };
 
 export function AdminOrders() {
+  useDocumentTitle("Manage Orders");
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

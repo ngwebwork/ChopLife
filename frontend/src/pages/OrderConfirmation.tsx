@@ -9,8 +9,10 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Button } from "@/components/common/Button";
 import { buildWhatsAppOrderLink } from "@/utils/whatsapp";
 import { getErrorMessage } from "@/services/api";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function OrderConfirmation() {
+  useDocumentTitle("Order Confirmed");
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState("");

@@ -11,8 +11,10 @@ import { formatDateTime } from "@/utils/date";
 import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function OrderTracking() {
+  useDocumentTitle("Track Order");
   const { orderNumber } = useParams<{ orderNumber?: string }>();
   const navigate = useNavigate();
   const [order, setOrder] = useState<Order | null>(null);

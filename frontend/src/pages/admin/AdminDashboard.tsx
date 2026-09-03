@@ -9,8 +9,10 @@ import { formatDateTime } from "@/utils/date";
 import { OrderStatusBadge } from "@/components/common/StatusBadge";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { usePolling } from "@/hooks/usePolling";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function AdminDashboard() {
+  useDocumentTitle("Admin Dashboard");
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
 

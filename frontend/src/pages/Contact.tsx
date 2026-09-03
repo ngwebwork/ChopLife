@@ -4,8 +4,10 @@ import { useSettingsStore } from "@/store/settingsStore";
 import { Input, Textarea } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { toast } from "@/store/toastStore";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function Contact() {
+  useDocumentTitle("Contact Us");
   const { settings, fetch } = useSettingsStore();
 
   useEffect(() => {

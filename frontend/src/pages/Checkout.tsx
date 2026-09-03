@@ -25,6 +25,7 @@ interface CheckoutForm {
 }
 
 export function Checkout() {
+  useDocumentTitle("Checkout");
   const { items, subtotal, clear } = useCartStore();
   const { settings, fetch } = useSettingsStore();
   const navigate = useNavigate();

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/common/Button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function NotFound() {
+  useDocumentTitle("Page Not Found");
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-lg flex-col items-center justify-center px-4 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-brand-600">

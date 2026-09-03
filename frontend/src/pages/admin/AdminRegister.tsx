@@ -8,6 +8,7 @@ import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { getErrorMessage } from "@/services/api";
 import { toast } from "@/store/toastStore";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 interface RegisterForm {
   name: string;
@@ -16,6 +17,7 @@ interface RegisterForm {
 }
 
 export function AdminRegister() {
+  useDocumentTitle("Create Admin Account");
   const { isAuthenticated, login } = useAuthStore();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
