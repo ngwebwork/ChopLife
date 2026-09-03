@@ -11,8 +11,10 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { MenuItemFormModal } from "@/components/admin/MenuItemFormModal";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function AdminMenu() {
+  useDocumentTitle("Manage Menu");
   const [items, setItems] = useState<MenuItem[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [formOpen, setFormOpen] = useState(false);

@@ -10,8 +10,10 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { Skeleton } from "@/components/common/Skeleton";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function AdminCategories() {
+  useDocumentTitle("Manage Categories");
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
