@@ -17,6 +17,7 @@ import { FoodCard } from "@/components/menu/FoodCard";
 import { CategoryCard } from "@/components/menu/CategoryCard";
 import { MenuGridSkeleton } from "@/components/common/Skeleton";
 import { Button } from "@/components/common/Button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const whyChooseUs = [
   { icon: Leaf, title: "Fresh Ingredients", desc: "Sourced daily and prepared with care for every order." },
@@ -44,6 +45,7 @@ const reviews = [
 ];
 
 export function Home() {
+  useDocumentTitle("Fresh Meals, Fast Delivery");
   const [featured, setFeatured] = useState<MenuItem[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const { fetch: fetchSettings } = useSettingsStore();

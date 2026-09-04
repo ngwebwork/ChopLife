@@ -8,11 +8,13 @@ import { FoodCard } from "@/components/menu/FoodCard";
 import { MenuGridSkeleton } from "@/components/common/Skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import clsx from "clsx";
 
 type SortOption = "default" | "price-asc" | "price-desc" | "rating";
 
 export function Menu() {
+  useDocumentTitle("Menu");
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<MenuItem[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
