@@ -206,9 +206,23 @@ func (s *OrderService) UpdateStatus(ctx context.Context, id string, status strin
 		return nil, ErrInvalidInput
 	}
 
-	update := bson.M{"orderStatus": status, "updatedAt": time.Now()}
-	if status == models.StatusDelivered {
+	var existing models.Order
+	if err := s.collection().FindOne(ctx, bson.M{"_id": objID}).Decode(&existing); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	now := time.Now()
+	update := bson.M{"orderStatus": status, "updatedAt": now}
+
+	// Cash on Delivery is collected in person, so delivery is what marks it
+	// Paid. A Demo Payment order is already Paid from checkout - never
+	// overwrite its original paidAt/paymentStatus here.
+	if status == models.StatusDelivered && existing.PaymentStatus != models.PaymentStatusPaid {
 		update["paymentStatus"] = models.PaymentStatusPaid
+		update["paidAt"] = now
 	}
 
 	result, err := s.collection().UpdateOne(ctx, bson.M{"_id": objID}, bson.M{"$set": update})
