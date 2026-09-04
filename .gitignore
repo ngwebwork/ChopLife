@@ -1,0 +1,27 @@
+# --- Node / Frontend ---
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+
+# --- Go / Backend ---
+backend/tmp/
+backend/bin/
+backend/*.exe
+backend/choplife-backend
+
+# --- Env ---
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+npm-debug.log*
