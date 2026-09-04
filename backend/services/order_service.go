@@ -34,7 +34,7 @@ func (s *OrderService) collection() *mongo.Collection {
 // authoritative prices/subtotals server-side (never trusting client-supplied
 // prices), applies the configured delivery fee, and persists the order.
 func (s *OrderService) Create(ctx context.Context, input models.CreateOrderInput) (*models.Order, error) {
-	if input.PaymentMethod != models.PaymentMethodCOD && input.PaymentMethod != models.PaymentMethodOnline {
+	if input.PaymentMethod != models.PaymentMethodCOD && input.PaymentMethod != models.PaymentMethodDemo {
 		return nil, ErrInvalidInput
 	}
 
@@ -100,12 +100,20 @@ func (s *OrderService) Create(ctx context.Context, input models.CreateOrderInput
 		return nil, err
 	}
 
+	now := time.Now()
+
+	// Cash on Delivery starts unpaid (paid physically at delivery). Demo
+	// Payment is a fully mocked flow with no real processor - the simulated
+	// payment "succeeds" immediately at checkout.
 	paymentStatus := models.PaymentStatusPending
-	if input.PaymentMethod == models.PaymentMethodCOD {
-		paymentStatus = models.PaymentStatusPending
+	var paymentReference string
+	var paidAt *time.Time
+	if input.PaymentMethod == models.PaymentMethodDemo {
+		paymentStatus = models.PaymentStatusPaid
+		paymentReference = utils.NewDemoPaymentReference()
+		paidAt = &now
 	}
 
-	now := time.Now()
 	order := models.Order{
 		OrderNumber:         orderNumber,
 		Customer:            input.Customer,
@@ -119,6 +127,8 @@ func (s *OrderService) Create(ctx context.Context, input models.CreateOrderInput
 		Phone:               input.Phone,
 		PaymentMethod:       input.PaymentMethod,
 		PaymentStatus:       paymentStatus,
+		PaymentReference:    paymentReference,
+		PaidAt:              paidAt,
 		OrderStatus:         models.StatusPending,
 		SpecialInstructions: input.SpecialInstructions,
 		CreatedAt:           now,
