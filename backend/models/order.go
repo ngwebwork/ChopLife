@@ -24,9 +24,16 @@ var ValidOrderStatuses = []string{
 }
 
 // Payment methods and statuses.
+//
+// ChopLife Kitchen uses no real payment processor. "Demo Payment" is a fully
+// mocked flow for portfolio/demo purposes only - no card details are ever
+// collected or stored, and no real money moves. Payment status is tracked
+// separately from order status: a Cash on Delivery order starts Pending and
+// is marked Paid once the order is Delivered, while a Demo Payment order is
+// marked Paid immediately (the simulated payment "succeeds" at checkout).
 const (
-	PaymentMethodCOD    = "Cash on Delivery"
-	PaymentMethodOnline = "Online Payment"
+	PaymentMethodCOD  = "Cash on Delivery"
+	PaymentMethodDemo = "Demo Payment"
 
 	PaymentStatusPending  = "Pending"
 	PaymentStatusPaid     = "Paid"
@@ -69,6 +76,7 @@ type Order struct {
 	PaymentMethod       string             `bson:"paymentMethod" json:"paymentMethod"`
 	PaymentStatus       string             `bson:"paymentStatus" json:"paymentStatus"`
 	PaymentReference    string             `bson:"paymentReference,omitempty" json:"paymentReference,omitempty"`
+	PaidAt              *time.Time         `bson:"paidAt,omitempty" json:"paidAt,omitempty"`
 	OrderStatus         string             `bson:"orderStatus" json:"orderStatus"`
 	SpecialInstructions string             `bson:"specialInstructions" json:"specialInstructions"`
 	CreatedAt           time.Time          `bson:"createdAt" json:"createdAt"`
