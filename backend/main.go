@@ -17,10 +17,6 @@ func main() {
 	database.Connect(cfg)
 	defer database.Disconnect()
 
-	if cfg.Port == "" {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
 	router := gin.New()
 	router.Use(middleware.Recovery())
 	router.Use(middleware.RequestLogger())
