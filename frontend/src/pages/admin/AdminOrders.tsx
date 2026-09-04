@@ -109,7 +109,7 @@ export function AdminOrders() {
               const canCancel = order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled";
               return (
                 <tr key={order.id} className="hover:bg-ink-50/50">
-                  <td className="px-4 py-3 font-semibold text-ink-900">#{order.orderNumber}</td>
+                  <td className="px-4 py-3 font-semibold text-ink-900 whitespace-nowrap">#{order.orderNumber}</td>
                   <td className="px-4 py-3 text-ink-600">{order.customer.name}</td>
                   <td className="px-4 py-3 text-ink-600">{order.items.length} item(s)</td>
                   <td className="px-4 py-3 font-semibold text-ink-900">{formatNaira(order.total)}</td>

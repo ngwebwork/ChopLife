@@ -68,7 +68,7 @@ export function AdminDashboard() {
               <tbody className="divide-y divide-ink-100">
                 {recentOrders.map((order) => (
                   <tr key={order.id}>
-                    <td className="py-3 pr-4 font-semibold text-ink-900">#{order.orderNumber}</td>
+                    <td className="py-3 pr-4 font-semibold text-ink-900 whitespace-nowrap">#{order.orderNumber}</td>
                     <td className="py-3 pr-4 text-ink-600">{order.customer.name}</td>
                     <td className="py-3 pr-4 font-semibold text-ink-900">{formatNaira(order.total)}</td>
                     <td className="py-3 pr-4"><OrderStatusBadge status={order.orderStatus} /></td>
