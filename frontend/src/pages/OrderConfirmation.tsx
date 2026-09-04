@@ -6,6 +6,7 @@ import { useSettingsStore } from "@/store/settingsStore";
 import type { Order } from "@/types";
 import { formatNaira } from "@/utils/currency";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { PaymentStatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button";
 import { buildWhatsAppOrderLink } from "@/utils/whatsapp";
 import { getErrorMessage } from "@/services/api";
@@ -92,6 +93,9 @@ export function OrderConfirmation() {
           <div>
             <p className="text-xs font-semibold text-ink-400">Payment Method</p>
             <p className="text-sm text-ink-900">{order.paymentMethod}</p>
+            <div className="mt-1">
+              <PaymentStatusBadge status={order.paymentStatus} />
+            </div>
           </div>
         </div>
       </div>

@@ -213,6 +213,29 @@ function OrderDetailView({ order }: { order: Order }) {
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-4 rounded-xl bg-ink-50 p-4 text-sm">
+        <div>
+          <p className="text-xs font-semibold text-ink-400">Payment Method</p>
+          <p className="font-semibold text-ink-900">{order.paymentMethod}</p>
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-ink-400">Payment Status</p>
+          <PaymentStatusBadge status={order.paymentStatus} />
+        </div>
+        {order.paymentReference && (
+          <div>
+            <p className="text-xs font-semibold text-ink-400">Payment Reference</p>
+            <p className="font-mono text-xs text-ink-700">{order.paymentReference}</p>
+          </div>
+        )}
+        {order.paidAt && (
+          <div>
+            <p className="text-xs font-semibold text-ink-400">Paid At</p>
+            <p className="text-ink-700">{formatDateTime(order.paidAt)}</p>
+          </div>
+        )}
+      </div>
+
       <div>
         <p className="mb-2 text-xs font-semibold text-ink-400">Items</p>
         <div className="divide-y divide-ink-100 rounded-xl border border-ink-100">

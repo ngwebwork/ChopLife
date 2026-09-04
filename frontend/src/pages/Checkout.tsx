@@ -205,8 +205,25 @@ export function Checkout() {
 
       {showSummary && (
         <OrderReviewModal
+          paymentMethod={paymentMethod}
           onClose={() => setShowSummary(false)}
-          onConfirm={handleSubmit(onSubmit)}
+          onPlaceOrder={handleSubmit(onSubmit)}
+          onContinueToDemoPayment={() => {
+            setShowSummary(false);
+            setShowDemoPayment(true);
+          }}
+          submitting={submitting}
+        />
+      )}
+
+      {showDemoPayment && (
+        <DemoPaymentModal
+          amount={total + settings.deliveryFee}
+          onBack={() => {
+            setShowDemoPayment(false);
+            setShowSummary(true);
+          }}
+          onComplete={handleSubmit(onSubmit)}
           submitting={submitting}
         />
       )}
@@ -215,17 +232,22 @@ export function Checkout() {
 }
 
 function OrderReviewModal({
+  paymentMethod,
   onClose,
-  onConfirm,
+  onPlaceOrder,
+  onContinueToDemoPayment,
   submitting,
 }: {
+  paymentMethod: PaymentMethod;
   onClose: () => void;
-  onConfirm: () => void;
+  onPlaceOrder: () => void;
+  onContinueToDemoPayment: () => void;
   submitting: boolean;
 }) {
   const { items, subtotal } = useCartStore();
   const { settings } = useSettingsStore();
   const total = subtotal();
+  const isDemoPayment = paymentMethod === "Demo Payment";
 
   return (
     <div
@@ -256,8 +278,66 @@ function OrderReviewModal({
           <Button variant="outline" fullWidth onClick={onClose} disabled={submitting}>
             Back
           </Button>
-          <Button fullWidth onClick={onConfirm} loading={submitting}>
-            Place Order
+          {isDemoPayment ? (
+            <Button fullWidth onClick={onContinueToDemoPayment}>
+              Continue to Payment
+            </Button>
+          ) : (
+            <Button fullWidth onClick={onPlaceOrder} loading={submitting}>
+              Place Order
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DemoPaymentModal({
+  amount,
+  onBack,
+  onComplete,
+  submitting,
+}: {
+  amount: number;
+  onBack: () => void;
+  onComplete: () => void;
+  submitting: boolean;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/50 p-0 backdrop-blur-sm animate-fade-in sm:items-center sm:p-4"
+      onClick={submitting ? undefined : onBack}
+    >
+      <div
+        className="w-full max-w-md rounded-t-2xl bg-white p-6 text-center shadow-xl animate-slide-up sm:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+          <Sparkles size={26} />
+        </div>
+        <h2 className="mt-4 text-lg font-bold text-ink-900">Demo Payment</h2>
+        <p className="mt-1 text-sm text-ink-400">
+          This is a simulated checkout for demo purposes only.
+        </p>
+
+        <div className="mt-5 rounded-xl bg-ink-50 py-4">
+          <p className="text-xs font-semibold text-ink-400">Amount to "pay"</p>
+          <p className="text-2xl font-extrabold text-ink-900">{formatNaira(amount)}</p>
+        </div>
+
+        <p className="mt-4 flex items-start gap-2 rounded-lg bg-blue-50 px-3 py-2.5 text-left text-xs font-medium text-blue-800">
+          <ShieldCheck size={16} className="mt-0.5 shrink-0" />
+          No real money will be charged. No card details are collected or stored — this button
+          only simulates a successful payment for demonstration.
+        </p>
+
+        <div className="mt-6 flex gap-3">
+          <Button variant="outline" fullWidth onClick={onBack} disabled={submitting}>
+            Back
+          </Button>
+          <Button fullWidth onClick={onComplete} loading={submitting}>
+            Complete Demo Payment
           </Button>
         </div>
       </div>

@@ -6,7 +6,7 @@ import type { DashboardStats, Order } from "@/types";
 import { StatCard } from "@/components/admin/StatCard";
 import { formatNaira } from "@/utils/currency";
 import { formatDateTime } from "@/utils/date";
-import { OrderStatusBadge } from "@/components/common/StatusBadge";
+import { OrderStatusBadge, PaymentStatusBadge } from "@/components/common/StatusBadge";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { usePolling } from "@/hooks/usePolling";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -63,6 +63,7 @@ export function AdminDashboard() {
                   <th className="pb-3 pr-4 font-semibold">Order</th>
                   <th className="pb-3 pr-4 font-semibold">Customer</th>
                   <th className="pb-3 pr-4 font-semibold">Total</th>
+                  <th className="pb-3 pr-4 font-semibold">Payment</th>
                   <th className="pb-3 pr-4 font-semibold">Status</th>
                   <th className="pb-3 font-semibold">Date</th>
                 </tr>
@@ -73,6 +74,12 @@ export function AdminDashboard() {
                     <td className="py-3 pr-4 font-semibold text-ink-900 whitespace-nowrap">#{order.orderNumber}</td>
                     <td className="py-3 pr-4 text-ink-600">{order.customer.name}</td>
                     <td className="py-3 pr-4 font-semibold text-ink-900">{formatNaira(order.total)}</td>
+                    <td className="py-3 pr-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs text-ink-500 whitespace-nowrap">{order.paymentMethod}</span>
+                        <PaymentStatusBadge status={order.paymentStatus} />
+                      </div>
+                    </td>
                     <td className="py-3 pr-4"><OrderStatusBadge status={order.orderStatus} /></td>
                     <td className="py-3 text-ink-400">{formatDateTime(order.createdAt)}</td>
                   </tr>

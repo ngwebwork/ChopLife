@@ -364,7 +364,7 @@ restaurant's admin accounts are set up (see [Known Trade-offs](#known-trade-offs
 
 These are deliberate MVP scope decisions, called out for transparency:
 
-- **Online payment** is architected (`paymentMethod`, `paymentStatus`, `paymentReference` fields exist end-to-end) but not wired to Paystack yet — the spec asked for the structure, not a fake integration. Cash on Delivery is fully functional.
+- **"Demo Payment" is a fully mocked payment flow for portfolio/demo purposes** — there is no real payment gateway (no Paystack, Stripe, or Flutterwave), and no card details are ever collected or stored. Selecting it shows a clearly-labeled "Demo Payment" screen ("no real money will be charged"); confirming it simulates a successful payment and marks the order `Paid` with a generated `paymentReference` and `paidAt` timestamp. Cash on Delivery orders stay `Pending` until the order is marked `Delivered`, at which point payment is considered collected in person. Swapping in a real processor later means replacing the demo-complete step with a real gateway call — the `paymentMethod` / `paymentStatus` / `paymentReference` / `paidAt` fields already model that.
 - **Admin JWT is stored in `localStorage`** (standard for JWT SPAs) rather than an httpOnly cookie. For a hardened production deployment, consider moving to a cookie-based session.
 - **Admin registration is open** at `/admin/register` for initial setup convenience. Once your restaurant's admin accounts exist, remove or protect this route (e.g. behind an invite code or by disabling the endpoint).
 - **Delivery pricing** is a single configurable flat fee (Admin → Settings). The order model and settings are structured so location/zone-based pricing can be layered in later without a schema change.
