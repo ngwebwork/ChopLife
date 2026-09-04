@@ -10,6 +10,7 @@ import (
 	"choplife-backend/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -23,8 +24,8 @@ func (s *AuthService) usersCollection() *mongo.Collection {
 	return database.Collection("users")
 }
 
-// Register creates a new admin account. Email uniqueness is enforced both
-// here and by the unique index on users.email.
+// Register creates a new admin account and returns the created user plus a
+// signed JWT so the caller is immediately logged in.
 func (s *AuthService) Register(ctx context.Context, name, email, password string) (*models.User, string, error) {
 	email = strings.ToLower(strings.TrimSpace(email))
 
@@ -52,7 +53,34 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 	if err != nil {
 		return nil, "", err
 	}
-	user.ID = res.InsertedID.(interface{ Hex() string }).(interface{}).(interface{ Hex() string }) == nil, "", nil // placeholder, replaced below
-	_ = res
-	return &user, "", nil
+	user.ID = res.InsertedID.(primitive.ObjectID)
+
+	token, err := utils.GenerateToken(user.ID.Hex(), user.Email, user.Role)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return &user, token, nil
+}
+
+// Login verifies credentials and returns the user plus a signed JWT.
+func (s *AuthService) Login(ctx context.Context, email, password string) (*models.User, string, error) {
+	email = strings.ToLower(strings.TrimSpace(email))
+
+	var user models.User
+	err := s.usersCollection().FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		return nil, "", ErrUnauthorized
+	}
+
+	if !utils.CheckPassword(user.Password, password) {
+		return nil, "", ErrUnauthorized
+	}
+
+	token, err := utils.GenerateToken(user.ID.Hex(), user.Email, user.Role)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return &user, token, nil
 }
