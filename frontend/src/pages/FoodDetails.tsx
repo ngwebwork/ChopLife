@@ -12,6 +12,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useCartStore } from "@/store/cartStore";
 import { toast } from "@/store/toastStore";
 import { getErrorMessage } from "@/services/api";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function FoodDetails() {
   const { id } = useParams<{ id: string }>();
@@ -51,6 +52,8 @@ export function FoodDetails() {
       </div>
     );
   }
+
+  useDocumentTitle(item ? item.name : "Menu Item");
 
   if (!item) {
     return <LoadingSpinner fullPage label="Loading dish..." />;
