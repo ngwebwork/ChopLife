@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Truck, Banknote, CreditCard } from "lucide-react";
+import { Truck, Banknote, ShieldCheck, Sparkles } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Input, Textarea } from "@/components/common/Input";
@@ -32,6 +32,7 @@ export function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Cash on Delivery");
   const [submitting, setSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [showDemoPayment, setShowDemoPayment] = useState(false);
   const orderPlacedRef = useRef(false);
 
   useEffect(() => {
@@ -161,25 +162,26 @@ export function Checkout() {
               </button>
               <button
                 type="button"
-                onClick={() => setPaymentMethod("Online Payment")}
+                onClick={() => setPaymentMethod("Demo Payment")}
                 className={clsx(
                   "flex items-center gap-3 rounded-xl border-2 px-4 py-3.5 text-left transition-colors cursor-pointer",
-                  paymentMethod === "Online Payment"
+                  paymentMethod === "Demo Payment"
                     ? "border-brand-600 bg-brand-50"
                     : "border-ink-200 bg-white"
                 )}
               >
-                <CreditCard size={20} className="text-brand-700" />
+                <Sparkles size={20} className="text-brand-700" />
                 <div>
-                  <p className="text-sm font-bold text-ink-900">Online Payment</p>
-                  <p className="text-xs text-ink-400">Pay securely via card (Paystack)</p>
+                  <p className="text-sm font-bold text-ink-900">Demo Payment</p>
+                  <p className="text-xs text-ink-400">Simulated payment for this demo</p>
                 </div>
               </button>
             </div>
-            {paymentMethod === "Online Payment" && (
-              <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
-                Online payment integration is coming soon. Your order will be placed with payment
-                marked as pending, and our team will reach out to confirm payment.
+            {paymentMethod === "Demo Payment" && (
+              <p className="mt-3 flex items-start gap-2 rounded-lg bg-blue-50 px-3 py-2 text-xs font-medium text-blue-800">
+                <ShieldCheck size={14} className="mt-0.5 shrink-0" />
+                This is a demo checkout only. No real payment gateway is used and no real money
+                will ever be charged — no card details are collected or stored.
               </p>
             )}
           </div>

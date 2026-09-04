@@ -54,7 +54,7 @@ export const ORDER_STATUS_FLOW: OrderStatus[] = [
   "Delivered",
 ];
 
-export type PaymentMethod = "Cash on Delivery" | "Online Payment";
+export type PaymentMethod = "Cash on Delivery" | "Demo Payment";
 export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Refunded";
 
 export interface OrderItem {
@@ -88,6 +88,7 @@ export interface Order {
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   paymentReference?: string;
+  paidAt?: string;
   orderStatus: OrderStatus;
   specialInstructions: string;
   createdAt: string;
