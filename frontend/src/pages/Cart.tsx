@@ -8,8 +8,10 @@ import { OrderSummary } from "@/components/cart/OrderSummary";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Button } from "@/components/common/Button";
 import { buildWhatsAppCartLink } from "@/utils/whatsapp";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function Cart() {
+  useDocumentTitle("Your Cart");
   const { items, subtotal } = useCartStore();
   const { settings, fetch } = useSettingsStore();
   const navigate = useNavigate();

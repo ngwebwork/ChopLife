@@ -12,6 +12,7 @@ import { orderService, cartItemsToOrderItems } from "@/services/orderService";
 import { getErrorMessage } from "@/services/api";
 import { toast } from "@/store/toastStore";
 import type { PaymentMethod } from "@/types";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import clsx from "clsx";
 
 interface CheckoutForm {

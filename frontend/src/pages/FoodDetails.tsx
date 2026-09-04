@@ -41,6 +41,8 @@ export function FoodDetails() {
       });
   }, [id]);
 
+  useDocumentTitle(item ? item.name : "Menu Item");
+
   if (notFound) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
@@ -52,8 +54,6 @@ export function FoodDetails() {
       </div>
     );
   }
-
-  useDocumentTitle(item ? item.name : "Menu Item");
 
   if (!item) {
     return <LoadingSpinner fullPage label="Loading dish..." />;
