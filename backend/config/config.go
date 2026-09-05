@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -50,7 +51,34 @@ func Load() *Config {
 		log.Println("WARNING: JWT_SECRET is not set to a secure value. Set a strong secret before deploying to production.")
 	}
 
+	App.ClientURL = normalizeOrigin(App.ClientURL)
+
 	return App
+}
+
+// normalizeOrigin defends against a common deployment mistake - setting
+// CLIENT_URL without a scheme (e.g. "myapp.vercel.app" instead of
+// "https://myapp.vercel.app") or with a stray trailing slash/quote. The CORS
+// middleware requires an exact "http://" or "https://" prefixed origin and
+// panics on startup otherwise, which would take the whole API down over a
+// typo in one environment variable.
+func normalizeOrigin(origin string) string {
+	origin = strings.TrimSpace(origin)
+	origin = strings.Trim(origin, `"'`)
+	origin = strings.TrimSuffix(origin, "/")
+
+	if origin == "*" {
+		return origin
+	}
+	if origin == "" {
+		log.Println("WARNING: CLIENT_URL is empty, falling back to http://localhost:5173")
+		return "http://localhost:5173"
+	}
+	if !strings.HasPrefix(origin, "http://") && !strings.HasPrefix(origin, "https://") {
+		log.Printf("WARNING: CLIENT_URL %q is missing a scheme, assuming https://", origin)
+		origin = "https://" + origin
+	}
+	return origin
 }
 
 func getEnv(key, fallback string) string {

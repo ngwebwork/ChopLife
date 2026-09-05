@@ -90,6 +90,7 @@ export function OrderTracking() {
 
 function TrackingTimeline({ order }: { order: Order }) {
   const isCancelled = order.orderStatus === "Cancelled";
+  const isDelivered = order.orderStatus === "Delivered";
   const currentIndex = ORDER_STATUS_FLOW.indexOf(order.orderStatus);
 
   return (
@@ -108,6 +109,14 @@ function TrackingTimeline({ order }: { order: Order }) {
         <p className="mt-2 text-xs text-ink-400">Placed on {formatDateTime(order.createdAt)}</p>
       </div>
 
+      {isDelivered && (
+        <div className="mt-6 flex flex-col items-center rounded-2xl border border-green-100 bg-green-50 py-8 text-center">
+          <Check className="rounded-full bg-green-600 p-1.5 text-white" size={32} />
+          <p className="mt-3 text-sm font-bold text-green-700">Your order has been delivered!</p>
+          <p className="mt-1 text-xs text-green-600">We hope you enjoyed your meal 🎉</p>
+        </div>
+      )}
+
       {isCancelled ? (
         <div className="mt-6 flex flex-col items-center rounded-2xl border border-red-100 bg-red-50 py-10 text-center">
           <XCircle className="text-red-500" size={32} />
@@ -116,8 +125,8 @@ function TrackingTimeline({ order }: { order: Order }) {
       ) : (
         <ol className="mt-8 space-y-0">
           {ORDER_STATUS_FLOW.map((status, index) => {
-            const isDone = index < currentIndex;
-            const isCurrent = index === currentIndex;
+            const isDone = index < currentIndex || (isDelivered && index === currentIndex);
+            const isCurrent = index === currentIndex && !isDelivered;
             const isLast = index === ORDER_STATUS_FLOW.length - 1;
 
             return (
