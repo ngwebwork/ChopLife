@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"choplife-backend/database"
@@ -95,11 +96,6 @@ func (s *OrderService) Create(ctx context.Context, input models.CreateOrderInput
 		return nil, err
 	}
 
-	orderNumber, err := utils.NextOrderNumber(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	now := time.Now()
 
 	// Cash on Delivery starts unpaid (paid physically at delivery). Demo
@@ -115,7 +111,6 @@ func (s *OrderService) Create(ctx context.Context, input models.CreateOrderInput
 	}
 
 	order := models.Order{
-		OrderNumber:         orderNumber,
 		Customer:            input.Customer,
 		Items:               orderItems,
 		Subtotal:            subtotal,
@@ -135,12 +130,30 @@ func (s *OrderService) Create(ctx context.Context, input models.CreateOrderInput
 		UpdatedAt:           now,
 	}
 
-	res, err := s.collection().InsertOne(ctx, order)
-	if err != nil {
+	// Order numbers are random (not sequential) so guest order tracking can't
+	// be used to enumerate other customers' orders. Collisions are astronomically
+	// unlikely (1-in-a-million per attempt) but are still handled safely here,
+	// backed by the unique index on orderNumber.
+	const maxOrderNumberAttempts = 5
+	for attempt := 0; attempt < maxOrderNumberAttempts; attempt++ {
+		orderNumber, err := utils.RandomOrderNumber()
+		if err != nil {
+			return nil, err
+		}
+		order.OrderNumber = orderNumber
+
+		res, err := s.collection().InsertOne(ctx, order)
+		if err == nil {
+			order.ID = res.InsertedID.(primitive.ObjectID)
+			return &order, nil
+		}
+		if mongo.IsDuplicateKeyError(err) {
+			continue
+		}
 		return nil, err
 	}
-	order.ID = res.InsertedID.(primitive.ObjectID)
-	return &order, nil
+
+	return nil, errors.New("could not generate a unique order number, please try again")
 }
 
 func (s *OrderService) GetByOrderNumber(ctx context.Context, orderNumber string) (*models.Order, error) {
