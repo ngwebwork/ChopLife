@@ -2,122 +2,242 @@
 
 **Fresh meals. Fast delivery. No stress.**
 
-A production-quality, full-stack restaurant ordering platform for a Nigerian
-restaurant brand. Customers browse the menu, order as guests, pay cash on
-delivery (or reserve online payment for later), and track their order live.
-Restaurant staff run the whole operation from an admin dashboard — orders,
-menu, categories, customers and settings.
+ChopLife Kitchen is a full-stack Nigerian restaurant ordering platform built to provide a smooth food-ordering experience for customers and a practical operations dashboard for restaurant staff.
 
-Built as a real, deployable product — not a tutorial project.
+Customers can browse meals, customize orders, check out as guests, choose a payment method, receive an order number, and track their order. Restaurant staff can manage orders, menu items, categories, customers, restaurant settings, and order status from a protected admin dashboard.
+
+> **Built as a real-world portfolio project — focused on usability, responsive UI, API design, authentication, database integration, and restaurant operations.**
 
 ---
 
-## Table of Contents
+## 🌐 Live Demo
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Folder Structure](#folder-structure)
-- [Prerequisites](#prerequisites)
-- [MongoDB Setup](#mongodb-setup)
-- [Environment Variables](#environment-variables)
-- [Installation & Running Locally (Windows)](#installation--running-locally-windows)
-- [Seeding the Database](#seeding-the-database)
-- [API Documentation](#api-documentation)
-- [Admin Login](#admin-login)
-- [Deployment](#deployment)
-- [Known Trade-offs / Next Steps](#known-trade-offs--next-steps)
+**Frontend:**
+https://choplife-lime.vercel.app
 
 ---
 
-## Features
+## ✨ Highlights
 
-### Customer-facing
+* 🍛 Modern Nigerian food-focused restaurant storefront
+* 🔎 Menu search, category filtering, sorting, and availability filtering
+* 🛒 Persistent shopping cart with quantities, extras, and special instructions
+* 👤 Guest checkout — no account required
+* 📱 WhatsApp-friendly order confirmation and sharing
+* 📦 Order tracking with a visual status timeline
+* ⚡ Automatic order refresh for near real-time tracking
+* 🔐 JWT-protected admin dashboard
+* 📊 Admin statistics for orders, revenue, pending orders, and completed orders
+* 🍽️ Full menu and category management
+* ⚙️ Restaurant settings management
+* 💰 Server-side order total calculation to prevent client-side price tampering
+* 📱 Fully responsive across mobile, tablet, and desktop
 
-- Modern, mobile-first storefront (home, menu, food details, cart, checkout)
-- Search, category filters, sorting and availability filters on the menu
-- Cart with extras, special instructions and quantity controls, persisted in `localStorage`
-- Guest checkout (no account required) with full form validation
-- Order confirmation page with a shareable WhatsApp order message
-- Live order tracking (`/order/:orderNumber`) with a visual status timeline, auto-refreshing every 10s
-- Fully responsive from 360px phones to large desktops
+---
 
-### Admin
+## 📋 Table of Contents
 
-- JWT-protected admin dashboard (`/admin`) with live stats (today's orders, revenue, pending/completed)
-- Order management with status workflow (`Pending → Confirmed → Preparing → Ready → Out for Delivery → Delivered`, or `Cancelled`)
-- Menu management: create/edit/delete dishes, extras, ingredients, availability, "popular" flag
-- Category management: create/edit/delete, enable/disable
-- Customer summary derived from order history
-- Restaurant settings: name, logo, contact info, delivery fee, minimum order, social links, WhatsApp number
+* [Features](#-features)
+* [Tech Stack](#-tech-stack)
+* [Architecture](#-architecture)
+* [Project Structure](#-project-structure)
+* [Prerequisites](#-prerequisites)
+* [MongoDB Setup](#-mongodb-setup)
+* [Environment Variables](#-environment-variables)
+* [Run Locally](#-run-locally)
+* [Seed the Database](#-seed-the-database)
+* [API Overview](#-api-overview)
+* [Admin Access](#-admin-access)
+* [Payment Model](#-payment-model)
+* [Deployment](#-deployment)
+* [Known Limitations](#-known-limitations)
+* [Future Improvements](#-future-improvements)
+* [Why I Built This](#-why-i-built-this)
+
+---
+
+## 🚀 Features
+
+### Customer Experience
+
+* Modern, mobile-first restaurant storefront
+* Home, menu, food details, cart, checkout, and order tracking pages
+* Search by food name
+* Filter by category
+* Sort menu items
+* Filter available items
+* Add extras to menu items
+* Add special instructions
+* Cart persisted in `localStorage`
+* Guest checkout with form validation
+* Order confirmation with order number
+* Shareable WhatsApp order message
+* Public order tracking using `/order/:orderNumber`
+* Visual order status timeline
+* Automatic tracking refresh
+* Responsive design from small mobile screens to large desktops
+
+### Admin Dashboard
+
+* Protected admin authentication
+* Dashboard statistics
+* Order management
+* Order status workflow:
+
+```text
+Pending → Confirmed → Preparing → Ready → Out for Delivery → Delivered
+```
+
+* Cancelled order state
+* Create, update, and delete menu items
+* Manage menu extras
+* Manage ingredients
+* Toggle item availability
+* Mark items as popular
+* Create, update, and delete categories
+* Enable or disable categories
+* View customer information derived from order history
+* Update restaurant information and delivery settings
+* Manage WhatsApp contact information and social links
 
 ### Engineering
 
-- Clean layered backend: `routes → controllers → services → database`
-- Server-computed order pricing (never trusts client-submitted prices)
-- Consistent `{ success, data, message }` API envelope
-- JWT auth + bcrypt password hashing + role-based admin middleware
-- MongoDB indexes for query performance and uniqueness (emails, order numbers, etc.)
-- Toasts, skeleton loaders, empty states and confirmation dialogs throughout
-- No fake buttons — every action in the UI performs a real request
+* Layered backend architecture
+* REST API built with Go and Gin
+* MongoDB persistence
+* JWT authentication
+* Bcrypt password hashing
+* Role-based admin middleware
+* Server-side price calculation
+* MongoDB indexes for important queries and unique fields
+* Consistent API response envelope
+* Loading states, empty states, confirmation dialogs, and toast feedback
+* Real API actions throughout the dashboard instead of placeholder buttons
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-**Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, React Router, Zustand, React Hook Form, Axios, Lucide React
+### Frontend
 
-**Backend:** Go, Gin, MongoDB (official `go.mongodb.org/mongo-driver`), JWT (`golang-jwt/jwt`), bcrypt (`golang.org/x/crypto`)
+* React 19
+* TypeScript
+* Vite
+* Tailwind CSS v4
+* React Router
+* Zustand
+* React Hook Form
+* Axios
+* Lucide React
 
-**Database:** MongoDB (local or Atlas)
+### Backend
+
+* Go
+* Gin
+* MongoDB Official Go Driver
+* JWT
+* Bcrypt
+
+### Database
+
+* MongoDB
+* MongoDB Atlas for production
+* Local MongoDB for development
+
+### Deployment
+
+* Vercel for the frontend
+* Render, Railway, or Fly.io for the backend
+* MongoDB Atlas for production database hosting
 
 ---
 
-## Architecture
+## 🧩 Architecture
 
+```text
+                     ┌─────────────────────┐
+                     │    React Frontend   │
+                     │   Vite + Tailwind   │
+                     └──────────┬──────────┘
+                                │
+                         Axios / REST API
+                                │
+                                ▼
+                     ┌─────────────────────┐
+                     │    Go + Gin API     │
+                     │                     │
+                     │ Routes              │
+                     │ Controllers         │
+                     │ Services            │
+                     │ Middleware          │
+                     └──────────┬──────────┘
+                                │
+                         MongoDB Driver
+                                │
+                                ▼
+                     ┌─────────────────────┐
+                     │       MongoDB       │
+                     │                     │
+                     │ Users               │
+                     │ Menu Items          │
+                     │ Categories          │
+                     │ Orders              │
+                     │ Settings            │
+                     │ Counters            │
+                     └─────────────────────┘
 ```
-Browser (React SPA)
-      │  Axios (Bearer JWT for admin routes)
-      ▼
-Go/Gin REST API  (routes → controllers → services → database)
-      │  official MongoDB driver
-      ▼
-MongoDB  (users, menu_items, categories, orders, settings, counters)
-```
 
-Order pricing is always recomputed server-side from the live menu at order
-time — the client only sends `menuItemId`, `quantity`, chosen extras and
-instructions. This prevents price tampering and keeps historical orders
-accurate even if menu prices change later.
+### Order Pricing
+
+The frontend sends:
+
+* Menu item IDs
+* Quantities
+* Selected extras
+* Special instructions
+
+The backend then looks up the current menu data and calculates the order total itself.
+
+This means the API does **not** trust prices coming directly from the browser.
 
 ---
 
-## Folder Structure
+## 📁 Project Structure
 
 ```text
 choplife-kitchen/
+│
 ├── frontend/
 │   ├── src/
-│   │   ├── components/    # common/, layout/, menu/, cart/, admin/
-│   │   ├── pages/         # customer pages + pages/admin/
-│   │   ├── layouts/       # MainLayout, AdminLayout
-│   │   ├── hooks/         # useDebounce, usePolling, useDocumentTitle
-│   │   ├── services/      # axios instance + one module per resource
-│   │   ├── store/         # zustand: cart, auth, settings, toast
-│   │   ├── types/         # shared TypeScript interfaces
-│   │   └── utils/         # currency, date, whatsapp helpers
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   ├── layout/
+│   │   │   ├── menu/
+│   │   │   ├── cart/
+│   │   │   └── admin/
+│   │   │
+│   │   ├── pages/
+│   │   │   └── admin/
+│   │   ├── layouts/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   ├── store/
+│   │   ├── types/
+│   │   └── utils/
+│   │
 │   └── vite.config.ts
 │
 ├── backend/
-│   ├── cmd/seed/          # `go run ./cmd/seed` — sample data
-│   ├── config/            # env loading
-│   ├── controllers/       # HTTP handlers
-│   ├── services/          # business logic + MongoDB access
-│   ├── models/            # structs + request payloads
-│   ├── middleware/        # auth, CORS, recovery/logging
-│   ├── routes/            # route wiring
-│   ├── database/          # Mongo connection + indexes
-│   ├── utils/             # JWT, bcrypt, order numbers, pagination, responses
+│   ├── cmd/
+│   │   └── seed/
+│   ├── config/
+│   ├── controllers/
+│   ├── services/
+│   ├── models/
+│   ├── middleware/
+│   ├── routes/
+│   ├── database/
+│   ├── utils/
 │   └── main.go
 │
 └── README.md
@@ -125,35 +245,55 @@ choplife-kitchen/
 
 ---
 
-## Prerequisites
+## ✅ Prerequisites
 
-- [Go](https://go.dev/dl/) 1.22+
-- [Node.js](https://nodejs.org/) 20+
-- MongoDB — any of:
-  - [MongoDB Community Server](https://www.mongodb.com/try/download/community) installed locally, or
-  - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (`docker run -d -p 27017:27017 --name choplife-mongo mongo:7`), or
-  - a free [MongoDB Atlas](https://www.mongodb.com/atlas) cluster
+Make sure these are installed:
+
+* [Go](https://go.dev/dl/) 1.22+
+* [Node.js](https://nodejs.org/) 20+
+* [MongoDB Community Server](https://www.mongodb.com/try/download/community)
 
 ---
 
-## MongoDB Setup
+## 🗄️ MongoDB Setup
 
-Any of the options above works — the backend only needs a connection string
-in `MONGODB_URI`. For local development, the simplest is Docker:
+ChopLife uses **local MongoDB** during development.
 
-```cmd
-docker run -d -p 27017:27017 --name choplife-mongo mongo:7
+Make sure the MongoDB service is installed and running on your computer.
+
+### Local MongoDB
+
+The default connection string is:
+
+```env
+MONGODB_URI=mongodb://localhost:27017
 ```
 
-For Atlas, create a free cluster, add your IP to the access list, create a
-database user, and copy the connection string (it looks like
-`mongodb+srv://user:password@cluster0.xxxxx.mongodb.net`).
+The application uses the `choplife` database:
+
+```env
+MONGODB_DATABASE=choplife
+```
+
+You can verify that MongoDB is running through MongoDB Compass or `mongosh`.
+
+### MongoDB Atlas
+
+For production deployment, MongoDB Atlas can be used instead.
+
+Example:
+
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net
+```
 
 ---
 
-## Environment Variables
+## 🔐 Environment Variables
 
-### Backend (`backend/.env` — copy from `backend/.env.example`)
+### Backend — `backend/.env`
+
+Create the file from `.env.example`:
 
 ```env
 PORT=8080
@@ -165,24 +305,27 @@ CLIENT_URL=http://localhost:5173
 WHATSAPP_NUMBER=2348012345678
 ```
 
-- `JWT_SECRET` — **must** be changed to a long random value in production.
-- `CLIENT_URL` — used for CORS; must match the deployed frontend origin exactly.
-- `WHATSAPP_NUMBER` — fallback WhatsApp number (digits only, with country code, no `+`). The number actually used by the storefront comes from **Admin → Settings** once configured, so it can be changed without a redeploy.
-
-### Frontend (`frontend/.env` — copy from `frontend/.env.example`)
+### Frontend — `frontend/.env`
 
 ```env
 VITE_API_URL=http://localhost:8080/api
 VITE_WHATSAPP_NUMBER=2348012345678
 ```
 
+### Production Notes
+
+* Replace `JWT_SECRET` with a strong random secret.
+* Set `CLIENT_URL` to the exact deployed frontend origin.
+* Use your real WhatsApp business number.
+* Never commit `.env` files or production secrets to GitHub.
+
 ---
 
-## Installation & Running Locally (Windows)
+## 💻 Run Locally
 
-Open two terminals (Command Prompt or PowerShell).
+The project can be run on Windows using Command Prompt or PowerShell.
 
-**Terminal 1 — Backend**
+### 1. Start the Backend
 
 ```cmd
 cd backend
@@ -192,11 +335,15 @@ go run ./cmd/seed
 go run .
 ```
 
-The API starts on `http://localhost:8080`. `go run ./cmd/seed` populates
-categories, menu items, restaurant settings and a default admin account
-(see [Admin Login](#admin-login)) — safe to re-run any time, it upserts.
+Backend:
 
-**Terminal 2 — Frontend**
+```text
+http://localhost:8080
+```
+
+### 2. Start the Frontend
+
+Open another terminal:
 
 ```cmd
 cd frontend
@@ -205,167 +352,243 @@ npm install
 npm run dev
 ```
 
-The app starts on `http://localhost:5173`.
+Frontend:
 
-### Building for production
-
-```cmd
-cd backend
-go build -o choplife-backend.exe .
-
-cd ..\frontend
-npm run build
+```text
+http://localhost:5173
 ```
-
-The frontend build output is written to `frontend/dist/`.
 
 ---
 
-## Seeding the Database
+## 🌱 Seed the Database
+
+Run:
 
 ```cmd
 cd backend
 go run ./cmd/seed
 ```
 
-This seeds:
+The seed script creates starter data including:
 
-- 7 categories (Rice, Swallow, Soups, Grills, Fast Food, Drinks, Desserts)
-- 13 menu items with realistic Naira prices, extras and ingredients
-- Restaurant settings (delivery fee ₦1,500, minimum order ₦2,000, etc.)
-- One default admin account
+* 7 food categories
+* 13 menu items
+* Menu prices
+* Ingredients
+* Extras
+* Restaurant settings
+* Delivery fee and minimum order settings
+* Default admin account
 
-The seed script is idempotent — it upserts by name/email, so running it
-again won't create duplicates.
+The seed operation is designed to be safely re-run without creating duplicate starter records.
 
 ---
 
-## API Documentation
+## 🔌 API Overview
 
-Base URL: `http://localhost:8080/api`
+Base URL:
 
-All responses use the envelope:
-
-```json
-{ "success": true, "data": { ... } }
-{ "success": false, "message": "Human-readable error" }
+```text
+http://localhost:8080/api
 ```
 
-Routes marked 🔒 require `Authorization: Bearer <token>` from an admin login.
+### Response Format
 
-### Auth
-
-| Method | Path | Description |
-|---|---|---|
-| POST | `/auth/register` | Create an admin account |
-| POST | `/auth/login` | Log in, returns `{ token, user }` |
-| GET | `/auth/me` 🔒 | Return the current admin's identity |
-
-### Menu
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/menu` | List menu items. Query: `category`, `search`, `popular`, `available` |
-| GET | `/menu/:id` | Get one menu item |
-| POST | `/menu` 🔒 | Create a menu item |
-| PUT | `/menu/:id` 🔒 | Update a menu item |
-| DELETE | `/menu/:id` 🔒 | Delete a menu item |
-
-### Categories
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/categories` | List categories. Query: `active=true` for active-only |
-| POST | `/categories` 🔒 | Create a category |
-| PUT | `/categories/:id` 🔒 | Update a category |
-| DELETE | `/categories/:id` 🔒 | Delete a category |
-
-### Orders
-
-| Method | Path | Description |
-|---|---|---|
-| POST | `/orders` | Place an order (guest checkout) |
-| GET | `/orders/:orderNumber` | Look up an order for tracking (public) |
-| GET | `/orders` 🔒 | Paginated order list. Query: `page`, `limit`, `status` |
-| GET | `/orders/stats` 🔒 | Dashboard statistics |
-| PUT | `/orders/:id/status` 🔒 | Update order status |
-
-### Settings
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/settings` | Public restaurant settings (name, hours, delivery fee, WhatsApp, ...) |
-| PUT | `/settings` 🔒 | Update restaurant settings |
-
-### Example: placing an order
+Successful response:
 
 ```json
-POST /api/orders
 {
-  "customer": { "name": "Adaeze Okafor", "phone": "08012345678", "email": "adaeze@example.com" },
-  "items": [
-    { "menuItemId": "<id>", "quantity": 2, "extras": [{ "name": "Extra Chicken", "price": 2000 }], "specialInstructions": "less spicy" }
-  ],
-  "deliveryAddress": "12 Admiralty Way, Lekki Phase 1",
-  "city": "Lagos",
-  "phone": "08012345678",
-  "paymentMethod": "Cash on Delivery",
-  "specialInstructions": ""
+  "success": true,
+  "data": {}
 }
 ```
 
-The server looks up each `menuItemId`, validates availability and extras,
-and computes `subtotal`/`total` itself — it ignores any price the client
-might send.
+Error response:
+
+```json
+{
+  "success": false,
+  "message": "Human-readable error"
+}
+```
+
+### Authentication
+
+| Method | Endpoint         | Description             |
+| ------ | ---------------- | ----------------------- |
+| POST   | `/auth/register` | Create an admin account |
+| POST   | `/auth/login`    | Login and receive JWT   |
+| GET    | `/auth/me`       | Get current admin 🔒    |
+
+### Menu
+
+| Method | Endpoint    | Description         |
+| ------ | ----------- | ------------------- |
+| GET    | `/menu`     | List menu items     |
+| GET    | `/menu/:id` | Get one menu item   |
+| POST   | `/menu`     | Create menu item 🔒 |
+| PUT    | `/menu/:id` | Update menu item 🔒 |
+| DELETE | `/menu/:id` | Delete menu item 🔒 |
+
+### Categories
+
+| Method | Endpoint          | Description        |
+| ------ | ----------------- | ------------------ |
+| GET    | `/categories`     | List categories    |
+| POST   | `/categories`     | Create category 🔒 |
+| PUT    | `/categories/:id` | Update category 🔒 |
+| DELETE | `/categories/:id` | Delete category 🔒 |
+
+### Orders
+
+| Method | Endpoint               | Description             |
+| ------ | ---------------------- | ----------------------- |
+| POST   | `/orders`              | Place guest order       |
+| GET    | `/orders/:orderNumber` | Track public order      |
+| GET    | `/orders`              | List orders 🔒          |
+| GET    | `/orders/stats`        | Dashboard statistics 🔒 |
+| PUT    | `/orders/:id/status`   | Update order status 🔒  |
+
+### Settings
+
+| Method | Endpoint    | Description                    |
+| ------ | ----------- | ------------------------------ |
+| GET    | `/settings` | Get public restaurant settings |
+| PUT    | `/settings` | Update settings 🔒             |
 
 ---
 
-## Admin Login
+## 👨‍💼 Admin Access
 
-After seeding, sign in at `/admin/login` with:
+After seeding the database, the default development admin is:
 
-```
-Email:    admin@choplife.com
+```text
+Email: admin@choplife.com
 Password: Admin@123
 ```
 
-**Change this password immediately after first login in a real deployment.**
-An admin registration page also exists at `/admin/register` for creating
-additional accounts — restrict or remove public access to it once your
-restaurant's admin accounts are set up (see [Known Trade-offs](#known-trade-offs--next-steps)).
+Admin login:
+
+```text
+/admin/login
+```
+
+> **Important:** Change the default password immediately in any real deployment.
 
 ---
 
-## Deployment
+## 💳 Payment Model
 
-### Frontend → Vercel
+The current project supports two payment options:
 
-1. Push the repo to GitHub.
-2. Import the project in Vercel, set the root directory to `frontend`.
-3. Build command: `npm run build`, output directory: `dist`.
-4. Add environment variable `VITE_API_URL` pointing to your deployed backend, e.g. `https://your-api.onrender.com/api`.
+### Cash on Delivery
 
-### Backend → Render / Railway / Fly.io
+Customers place an order and payment is collected when the order is delivered.
 
-1. Point the service at the `backend` directory.
-2. Build command: `go build -o app .` — start command: `./app`.
-3. Set environment variables: `PORT` (usually provided by the platform), `MONGODB_URI`, `MONGODB_DATABASE`, `JWT_SECRET`, `CLIENT_URL` (your deployed frontend origin), `WHATSAPP_NUMBER`.
-4. Make sure `CLIENT_URL` matches the frontend's real origin exactly, or CORS will block requests.
+### Demo Payment
 
-### Database → MongoDB Atlas
+A simulated online payment flow created for portfolio/demo purposes.
 
-1. Create a free cluster, a database user, and allow network access from your backend host (or `0.0.0.0/0` for simplicity, tightened later).
-2. Use the `mongodb+srv://...` connection string as `MONGODB_URI`.
-3. Run the seed command once against the production database (from your local machine, pointing `MONGODB_URI` at Atlas) to create the initial admin account and starter menu.
+The demo payment system:
+
+* Does not process real money
+* Does not collect card details
+* Simulates a successful payment
+
+A real integration with **Paystack, Flutterwave, or Stripe** can be added later without redesigning the core order system.
 
 ---
 
-## Known Trade-offs / Next Steps
+## 🚀 Deployment
 
-These are deliberate MVP scope decisions, called out for transparency:
+### Frontend - Vercel
 
-- **"Demo Payment" is a fully mocked payment flow for portfolio/demo purposes** — there is no real payment gateway (no Paystack, Stripe, or Flutterwave), and no card details are ever collected or stored. Selecting it shows a clearly-labeled "Demo Payment" screen ("no real money will be charged"); confirming it simulates a successful payment and marks the order `Paid` with a generated `paymentReference` and `paidAt` timestamp. Cash on Delivery orders stay `Pending` until the order is marked `Delivered`, at which point payment is considered collected in person. Swapping in a real processor later means replacing the demo-complete step with a real gateway call — the `paymentMethod` / `paymentStatus` / `paymentReference` / `paidAt` fields already model that.
-- **Admin JWT is stored in `localStorage`** (standard for JWT SPAs) rather than an httpOnly cookie. For a hardened production deployment, consider moving to a cookie-based session.
-- **Admin registration is open** at `/admin/register` for initial setup convenience. Once your restaurant's admin accounts exist, remove or protect this route (e.g. behind an invite code or by disabling the endpoint).
-- **Delivery pricing** is a single configurable flat fee (Admin → Settings). The order model and settings are structured so location/zone-based pricing can be layered in later without a schema change.
-- **Customers list** in admin is derived from order history (no separate customer accounts in the MVP, per spec — customers order as guests).
+The frontend is deployed on Vercel.
+
+For deployment:
+
+1. Push the project to GitHub.
+2. Import the repository into Vercel.
+3. Set the project root to `frontend`.
+4. Use the following build command:
+
+```text
+npm run build
+```
+
+5. Output directory:
+
+```text
+dist
+```
+
+6. Configure the API URL:
+
+```env
+VITE_API_URL=https://your-backend-url/api
+```
+
+### Backend — Render / Railway / Fly.io
+
+Deploy the `backend` directory and configure:
+
+```env
+PORT=8080
+MONGODB_URI=your_mongodb_atlas_uri
+MONGODB_DATABASE=choplife
+JWT_SECRET=your_production_secret
+JWT_EXPIRY_HOURS=72
+CLIENT_URL=https://your-frontend-url.vercel.app
+WHATSAPP_NUMBER=your_whatsapp_number
+```
+
+### Database — MongoDB Atlas
+
+For production, use MongoDB Atlas and set `MONGODB_URI` to your Atlas connection string.
+
+---
+
+## ⚠️ Known Limitations
+
+These are intentional MVP decisions:
+
+* Online payment is currently simulated for demo purposes.
+* Admin JWT is stored in `localStorage`.
+* Admin registration is available for initial setup and should be restricted in production.
+* Delivery pricing currently uses a configurable flat fee.
+* Customers do not have dedicated accounts; customer information is derived from order history.
+
+---
+
+## 🔮 Future Improvements
+
+Potential future improvements include:
+
+* Real Paystack or Flutterwave payment integration
+* Zone-based delivery pricing
+* Customer accounts and order history
+* Promo codes and discounts
+* Inventory tracking
+* Restaurant staff roles and permissions
+* Email/SMS order notifications
+* Advanced sales and revenue analytics
+* Order receipt generation
+* Automated deployment and CI/CD
+
+---
+
+## 👨‍💻 Why I Built This
+
+ChopLife Kitchen was built to demonstrate how a real business workflow can be translated into a complete full-stack web application.
+
+The project covers the complete flow from:
+
+**Customer browsing → Cart → Checkout → Order creation → Database persistence → Order tracking → Restaurant administration**
+
+It combines a polished React frontend with a structured Go backend and MongoDB database instead of treating the project as a simple static food website.
+
+---
+
+## 📄 License
+
+This project is primarily intended as a portfolio and learning project.
