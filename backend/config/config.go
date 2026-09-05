@@ -10,14 +10,14 @@ import (
 
 // Config holds all environment-driven application configuration.
 type Config struct {
-	Port                    string
-	MongoURI                string
-	MongoDatabase           string
-	JWTSecret               string
-	JWTExpiryHours          int
-	ClientURL               string
-	WhatsAppNumber          string
-	AllowAdminRegistration  bool
+	Port                   string
+	MongoURI               string
+	MongoDatabase          string
+	JWTSecret              string
+	JWTExpiryHours         int
+	ClientURL              string
+	WhatsAppNumber         string
+	AllowAdminRegistration bool
 }
 
 var App *Config

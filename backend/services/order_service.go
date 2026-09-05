@@ -76,7 +76,7 @@ func (s *OrderService) Create(ctx context.Context, input models.CreateOrderInput
 			}
 		}
 
-		lineSubtotal := (menuItem.Price+extrasTotal)*float64(itemInput.Quantity)
+		lineSubtotal := (menuItem.Price + extrasTotal) * float64(itemInput.Quantity)
 
 		orderItems = append(orderItems, models.OrderItem{
 			MenuItemID:          menuItem.ID,

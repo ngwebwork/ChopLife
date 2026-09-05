@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { UtensilsCrossed, LogIn } from "lucide-react";
 import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/authStore";
@@ -77,13 +77,6 @@ export function AdminLogin() {
             Sign In
           </Button>
         </form>
-
-        <p className="mt-5 text-center text-sm text-ink-400">
-          Setting up for the first time?{" "}
-          <Link to="/admin/register" className="font-semibold text-brand-700 hover:underline">
-            Create admin account
-          </Link>
-        </p>
       </div>
     </div>
   );
