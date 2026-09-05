@@ -10,13 +10,14 @@ import (
 
 // Config holds all environment-driven application configuration.
 type Config struct {
-	Port            string
-	MongoURI        string
-	MongoDatabase   string
-	JWTSecret       string
-	JWTExpiryHours  int
-	ClientURL       string
-	WhatsAppNumber  string
+	Port                    string
+	MongoURI                string
+	MongoDatabase           string
+	JWTSecret               string
+	JWTExpiryHours          int
+	ClientURL               string
+	WhatsAppNumber          string
+	AllowAdminRegistration  bool
 }
 
 var App *Config
@@ -35,13 +36,14 @@ func Load() *Config {
 	}
 
 	App = &Config{
-		Port:           getEnv("PORT", "8080"),
-		MongoURI:       getEnv("MONGODB_URI", "mongodb://localhost:27017"),
-		MongoDatabase:  getEnv("MONGODB_DATABASE", "choplife"),
-		JWTSecret:      getEnv("JWT_SECRET", ""),
-		JWTExpiryHours: expiryHours,
-		ClientURL:      getEnv("CLIENT_URL", "http://localhost:5173"),
-		WhatsAppNumber: getEnv("WHATSAPP_NUMBER", ""),
+		Port:                   getEnv("PORT", "8080"),
+		MongoURI:               getEnv("MONGODB_URI", "mongodb://localhost:27017"),
+		MongoDatabase:          getEnv("MONGODB_DATABASE", "choplife"),
+		JWTSecret:              getEnv("JWT_SECRET", ""),
+		JWTExpiryHours:         expiryHours,
+		ClientURL:              getEnv("CLIENT_URL", "http://localhost:5173"),
+		WhatsAppNumber:         getEnv("WHATSAPP_NUMBER", ""),
+		AllowAdminRegistration: getEnv("ALLOW_ADMIN_REGISTRATION", "false") == "true",
 	}
 
 	if App.JWTSecret == "" || App.JWTSecret == "change_this_secret" {

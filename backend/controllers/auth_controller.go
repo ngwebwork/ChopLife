@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"choplife-backend/config"
 	"choplife-backend/services"
 	"choplife-backend/utils"
 
@@ -23,10 +24,16 @@ type registerRequest struct {
 	Password string `json:"password" binding:"required,min=6"`
 }
 
-// Register creates a new admin account. In production this endpoint should
-// be disabled or protected behind an invite code/existing-admin check once
-// the first admin has been created.
+// Register creates a new admin account. Disabled by default - only an
+// existing admin should be able to log in. Set ALLOW_ADMIN_REGISTRATION=true
+// in the environment to re-enable it (e.g. temporarily, for onboarding a new
+// admin), then turn it back off.
 func (ac *AuthController) Register(c *gin.Context) {
+	if !config.App.AllowAdminRegistration {
+		utils.Error(c, http.StatusForbidden, "Admin registration is currently disabled")
+		return
+	}
+
 	var req registerRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.Error(c, http.StatusBadRequest, "Please provide a valid name, email and password (min 6 characters)")

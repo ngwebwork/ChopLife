@@ -16,7 +16,10 @@ import { Contact } from "@/pages/Contact";
 import { NotFound } from "@/pages/NotFound";
 
 import { AdminLogin } from "@/pages/admin/AdminLogin";
-import { AdminRegister } from "@/pages/admin/AdminRegister";
+// Admin self-registration is intentionally disabled (route + link removed) so only
+// existing admins can sign in. Re-add the /admin/register route and the AdminLogin
+// link when it's needed again - the page and backend endpoint are still in place,
+// just gated behind ALLOW_ADMIN_REGISTRATION on the backend.
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { AdminOrders } from "@/pages/admin/AdminOrders";
 import { AdminMenu } from "@/pages/admin/AdminMenu";
@@ -42,7 +45,6 @@ function App() {
         </Route>
 
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/register" element={<AdminRegister />} />
 
         <Route
           path="/admin"
