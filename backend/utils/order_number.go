@@ -1,41 +1,28 @@
 package utils
 
 import (
-	"context"
+	"crypto/rand"
 	"fmt"
+	"math/big"
 	"time"
-
-	"choplife-backend/database"
-
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type counterDoc struct {
-	ID  string `bson:"_id"`
-	Seq int64  `bson:"seq"`
-}
+// maxOrderSuffix bounds the random suffix to 6 digits (000000-999999), e.g.
+// CLK-2026-483920. It intentionally is NOT a sequential counter: order
+// numbers are public (used for guest order tracking with no login), so a
+// predictable/incrementing number would let anyone enumerate other
+// customers' orders just by guessing nearby values.
+var maxOrderSuffix = big.NewInt(1000000)
 
-// NextOrderNumber atomically increments a per-year counter in MongoDB and
-// formats it as "CLK-<year>-<6 digit sequence>", e.g. CLK-2026-000123.
-func NextOrderNumber(ctx context.Context) (string, error) {
-	year := time.Now().Year()
-	counterID := fmt.Sprintf("order_%d", year)
-
-	opts := options.FindOneAndUpdate().
-		SetUpsert(true).
-		SetReturnDocument(options.After)
-
-	var doc counterDoc
-	err := database.Collection("counters").FindOneAndUpdate(
-		ctx,
-		bson.M{"_id": counterID},
-		bson.M{"$inc": bson.M{"seq": 1}},
-		opts,
-	).Decode(&doc)
+// RandomOrderNumber generates a candidate order number with a
+// cryptographically random 6-digit suffix. Callers are responsible for
+// verifying uniqueness (e.g. via a unique index + insert retry) since this
+// function does not touch the database.
+func RandomOrderNumber() (string, error) {
+	n, err := rand.Int(rand.Reader, maxOrderSuffix)
 	if err != nil {
 		return "", err
 	}
-
-	return fmt.Sprintf("CLK-%d-%06d", year, doc.Seq), nil
+	year := time.Now().Year()
+	return fmt.Sprintf("CLK-%d-%06d", year, n.Int64()), nil
 }
